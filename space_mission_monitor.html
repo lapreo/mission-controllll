@@ -1,120 +1,238 @@
-import random
-import time
+# MISSION CONTROL AI
+# GS2026.1 - Pensamento Computacional e Automacao com Python
 
-# =============================================
-# AETHER - Sistema de Monitoramento Espacial
-# Global Solution 2026 - FIAP
-# =============================================
+NOME_MISSAO = "Projeto Helio-7"
+NOME_EQUIPE  = "Equipe Nova Era"
 
-def gerar_dados():
-    return {
-        "Painel Solar":     random.randint(40, 90),
-        "Comunicacoes":     random.randint(25, 75),
-        "Suporte de Vida":  random.randint(20, 60),
-        "Propulsao":        random.randint(60, 130),
-    }
+# Dados
+dados_missao = [
+    [22, 95, 91, 98, 93],
+    [26, 83, 76, 95, 87],
+    [32, 61, 54, 90, 68],
+    [37, 39, 35, 85, 52],
+    [41, 25, 17, 76, 33],
+    [35, 52, 30, 81, 48],
+    [30, 68, 45, 86, 62],
+]
 
-def verificar_status(temp):
-    if temp > 100:
-        return "CRITICO"
-    elif temp > 70:
-        return "ALERTA"
+areas_monitoradas = [
+    "Temperatura interna",
+    "Comunicacao com a base",
+    "Sistema de energia",
+    "Suporte de oxigenio",
+    "Estabilidade operacional",
+]
+
+
+def analisar_temperatura(valor):
+    if valor < 18:
+        return "ATENCAO", 1, "Temperatura abaixo do ideal"
+    elif valor <= 30:
+        return "NORMAL", 0, "Temperatura estavel"
+    elif valor <= 35:
+        return "ATENCAO", 1, "Temperatura elevada"
     else:
-        return "NOMINAL"
+        return "CRITICO", 2, "Risco de superaquecimento"
 
-def gerar_energia():
-    solar   = random.randint(50, 90)
-    bateria = random.randint(10, 40)
-    total   = solar + bateria
-    return solar, bateria, total
 
-def exibir_monitoramento():
-    print("\n" + "=" * 50)
-    print("   AETHER - MONITORAMENTO DE MISSAO ESPACIAL")
-    print("=" * 50)
-
-    dados = gerar_dados()
-    alertas = []
-
-    print("\n[ MODULOS OPERACIONAIS ]\n")
-    for modulo, temp in dados.items():
-        status = verificar_status(temp)
-        print(f"  {modulo:<20} {temp}°C   [{status}]")
-        if status in ("CRITICO", "ALERTA"):
-            alertas.append((modulo, temp, status))
-
-    solar, bateria, total = gerar_energia()
-    eficiencia = random.randint(75, 99)
-
-    print("\n[ ENERGIA RENOVAVEL ]\n")
-    print(f"  Painel Solar:   {solar}%")
-    print(f"  Bateria:        {bateria}%")
-    print(f"  Total gerado:   {total} W")
-    print(f"  Eficiencia:     {eficiencia}%")
-
-    print("\n[ ALERTAS AUTOMATICOS ]\n")
-    if alertas:
-        for modulo, temp, status in alertas:
-            print(f"  !! {status}: {modulo} com {temp}°C - verificar imediatamente!")
+def analisar_comunicacao(valor):
+    if valor < 30:
+        return "CRITICO", 2, "Comunicacao com a base em nivel critico"
+    elif valor < 60:
+        return "ATENCAO", 1, "Comunicacao instavel"
     else:
-        print("  Todos os modulos operando normalmente.")
+        return "NORMAL", 0, "Comunicacao estavel"
 
-    print("\n" + "=" * 50)
 
-def tomada_de_decisao(modulo, temp):
-    print(f"\n>> Modulo: {modulo} | Temperatura: {temp}°C")
-    if temp > 100:
-        print(">> ACAO: Reduzir carga imediatamente e acionar resfriamento.")
-    elif temp > 70:
-        print(">> ACAO: Monitorar de perto. Considerar reducao de potencia.")
+def analisar_bateria(valor):
+    if valor < 20:
+        return "CRITICO", 2, "Bateria em nivel critico"
+    elif valor < 50:
+        return "ATENCAO", 1, "Bateria abaixo do recomendado"
     else:
-        print(">> ACAO: Nenhuma acao necessaria.")
+        return "NORMAL", 0, "Energia estavel"
 
-# =============================================
-# MENU PRINCIPAL
-# =============================================
 
-def menu():
-    print("\n" + "=" * 50)
-    print("   AETHER - MISSAO GS-2026-ALPHA")
-    print("=" * 50)
-    print("\n  1. Monitorar missao")
-    print("  2. Verificar modulo especifico")
-    print("  3. Simular emergencia")
-    print("  4. Sair")
-    return input("\n  Escolha uma opcao: ").strip()
+def analisar_oxigenio(valor):
+    if valor < 80:
+        return "CRITICO", 2, "Oxigenio em nivel critico"
+    elif valor < 90:
+        return "ATENCAO", 1, "Oxigenio abaixo do ideal"
+    else:
+        return "NORMAL", 0, "Oxigenio adequado"
+
+
+def analisar_estabilidade(valor):
+    if valor < 40:
+        return "CRITICO", 2, "Estabilidade operacional critica"
+    elif valor < 70:
+        return "ATENCAO", 1, "Estabilidade operacional reduzida"
+    else:
+        return "NORMAL", 0, "Estabilidade operacional adequada"
+
+
+def classificar_ciclo(pontuacao):
+    if pontuacao <= 2:
+        return "MISSAO ESTAVEL"
+    elif pontuacao <= 5:
+        return "MISSAO EM ATENCAO"
+    else:
+        return "MISSAO CRITICA"
+
+
+def analisar_tendencia(riscos):
+    if riscos[-1] > riscos[0]:
+        return "A missao apresentou tendencia de PIORA."
+    elif riscos[-1] < riscos[0]:
+        return "A missao apresentou tendencia de MELHORA."
+    else:
+        return "A missao permaneceu ESTAVEL em relacao ao inicio."
+
+
+def identificar_area_mais_afetada(pontos_por_area):
+    maior_indice = 0
+    for i in range(1, len(pontos_por_area)):
+        if pontos_por_area[i] > pontos_por_area[maior_indice]:
+            maior_indice = i
+    return areas_monitoradas[maior_indice]
+
+
+def gerar_recomendacao(classificacao, alertas):
+    criticos = [nome for nome, status in alertas if status == "CRITICO"]
+
+    if classificacao == "MISSAO ESTAVEL":
+        return "Manter operacao normal e continuar monitoramento."
+
+    if classificacao == "MISSAO CRITICA":
+        if len(criticos) >= 3:
+            return "Ativar modo de seguranca e priorizar suporte a vida, energia e comunicacao."
+        mensagens = {
+            "Temperatura interna":      "Verificar controle termico da missao.",
+            "Comunicacao com a base":   "Tentar restabelecer contato com a base.",
+            "Sistema de energia":       "Ativar modo de economia de energia.",
+            "Suporte de oxigenio":      "Acionar protocolo de suporte a vida.",
+            "Estabilidade operacional": "Reduzir operacoes nao essenciais.",
+        }
+        for area in criticos:
+            if area in mensagens:
+                return mensagens[area]
+
+    return "Monitorar sistemas em atencao e preparar plano de contingencia."
+
+
+def analisar_ciclos():
+    riscos = []
+    pontos_por_area = [0] * 5
+    ciclo_critico_idx = 0
+    ciclo_critico_pts = -1
+    qtd_criticos = 0
+
+    for i, ciclo in enumerate(dados_missao):
+        temp, com, bat, oxi, est = ciclo
+
+        analises = [
+            analisar_temperatura(temp),
+            analisar_comunicacao(com),
+            analisar_bateria(bat),
+            analisar_oxigenio(oxi),
+            analisar_estabilidade(est),
+        ]
+
+        pontuacao = sum(pts for _, pts, _ in analises)
+        classificacao = classificar_ciclo(pontuacao)
+        riscos.append(pontuacao)
+
+        for j, (_, pts, _) in enumerate(analises):
+            pontos_por_area[j] += pts
+
+        if pontuacao > ciclo_critico_pts:
+            ciclo_critico_pts = pontuacao
+            ciclo_critico_idx = i
+
+        if classificacao == "MISSAO CRITICA":
+            qtd_criticos += 1
+
+        alertas = [(areas_monitoradas[j], analises[j][0]) for j in range(5)]
+        recomendacao = gerar_recomendacao(classificacao, alertas)
+
+        print(f"\nCICLO {i + 1}")
+        print("-" * 60)
+        rotulos = ["Temperatura", "Comunicacao", "Bateria", "Oxigenio", "Estabilidade"]
+        unidades = ["oC", "%", "%", "%", "%"]
+        valores = [temp, com, bat, oxi, est]
+
+        for j in range(5):
+            cls, _, desc = analises[j]
+            print(f"{rotulos[j]}: {valores[j]}{unidades[j]} | {cls} | {desc}")
+
+        print(f"\nPontuacao de risco do ciclo: {pontuacao}")
+        print(f"Classificacao do ciclo: {classificacao}")
+        print(f"Recomendacao: {recomendacao}")
+
+    return riscos, pontos_por_area, ciclo_critico_idx, ciclo_critico_pts, qtd_criticos
+
+
+def gerar_relatorio_final(riscos, pontos_por_area, ciclo_critico_idx,
+                          ciclo_critico_pts, qtd_criticos):
+    n = len(dados_missao)
+
+    medias = []
+    for col in range(5):
+        total = sum(dados_missao[linha][col] for linha in range(n))
+        medias.append(total / n)
+
+    risco_medio = sum(riscos) / n
+    tendencia = analisar_tendencia(riscos)
+    area_afetada = identificar_area_mais_afetada(pontos_por_area)
+    classificacao_final = classificar_ciclo(round(risco_medio))
+
+    print("\n" + "=" * 60)
+    print("RELATORIO FINAL DA MISSAO")
+    print("=" * 60)
+    print(f"Missao : {NOME_MISSAO}")
+    print(f"Equipe : {NOME_EQUIPE}")
+    print(f"\nQuantidade de ciclos analisados: {n}")
+    print(f"\nMedia de temperatura  : {medias[0]:.2f} oC")
+    print(f"Media de comunicacao  : {medias[1]:.2f}%")
+    print(f"Media de bateria      : {medias[2]:.2f}%")
+    print(f"Media de oxigenio     : {medias[3]:.2f}%")
+    print(f"Media de estabilidade : {medias[4]:.2f}%")
+    print(f"\nCiclo mais critico      : Ciclo {ciclo_critico_idx + 1}")
+    print(f"Maior pontuacao de risco: {ciclo_critico_pts}")
+    print(f"Risco medio da missao   : {risco_medio:.2f}")
+    print(f"Ciclos criticos         : {qtd_criticos}")
+    print(f"\nTendencia da missao:\n{tendencia}")
+    print("\nPontuacao acumulada por area:")
+    for j, area in enumerate(areas_monitoradas):
+        print(f"  {area}: {pontos_por_area[j]} pontos")
+    print(f"\nArea mais afetada:\n  {area_afetada}")
+    print(f"\nClassificacao final da missao:\n  {classificacao_final}")
+
+    print("\nConclusao:")
+    if classificacao_final == "MISSAO ESTAVEL":
+        print("A missao foi conduzida com sucesso e todos os sistemas operaram dentro dos parametros normais.")
+    elif classificacao_final == "MISSAO EM ATENCAO":
+        print("A missao apresentou instabilidade relevante durante a operacao. "
+              "Apesar da tentativa de recuperacao no ultimo ciclo, ainda existem sistemas "
+              "em atencao e a equipe deve manter o plano de contingencia ativo.")
+    else:
+        print("A missao enfrentou condicoes criticas severas. "
+              "E necessaria uma revisao completa dos sistemas antes de retomar operacoes plenas.")
+    print("=" * 60)
+
 
 def main():
-    while True:
-        opcao = menu()
+    print("=" * 60)
+    print("MISSION CONTROL AI")
+    print("=" * 60)
+    print(f"Missao : {NOME_MISSAO}")
+    print(f"Equipe : {NOME_EQUIPE}")
+    print(f"Quantidade de ciclos analisados: {len(dados_missao)}")
+    print("=" * 60)
 
-        if opcao == "1":
-            exibir_monitoramento()
+    riscos, pontos_por_area, ciclo_critico_idx, ciclo_critico_pts, qtd_criticos = analisar_ciclos()
+    gerar_relatorio_final(riscos, pontos_por_area, ciclo_critico_idx, ciclo_critico_pts, qtd_criticos)
 
-        elif opcao == "2":
-            modulos = ["Painel Solar", "Comunicacoes", "Suporte de Vida", "Propulsao"]
-            print("\nModulos disponíveis:")
-            for i, m in enumerate(modulos, 1):
-                print(f"  {i}. {m}")
-            escolha = input("Escolha o numero do modulo: ").strip()
-            if escolha in ["1","2","3","4"]:
-                modulo = modulos[int(escolha) - 1]
-                temp = random.randint(20, 130)
-                tomada_de_decisao(modulo, temp)
-            else:
-                print("Opcao invalida.")
-
-        elif opcao == "3":
-            print("\n!! SIMULANDO EMERGENCIA !!")
-            print("Temperatura critica detectada na Propulsao!")
-            tomada_de_decisao("Propulsao", 128)
-
-        elif opcao == "4":
-            print("\nEncerrando sistema AETHER. Ate logo.\n")
-            break
-
-        else:
-            print("Opcao invalida. Tente novamente.")
 
 if __name__ == "__main__":
     main()
