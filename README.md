@@ -52,7 +52,7 @@ Powered by Claude — análise inteligente dos dados de telemetria em tempo real
 
 # Como Executar
 
-Abra o arquivo 'space_mission_monitor.html'
+Abra o arquivo 'space_mission_monitor'
 
 ---
 
