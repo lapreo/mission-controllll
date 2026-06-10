@@ -66,5 +66,5 @@ Abra o arquivo 'space_mission_monitor'
 # Links
 
 - [Repositório GitHub](https://github.com/lapreo/mission-controllll.git)
-- [Vídeo YouTube](https://youtu.be/ofFMxakkbGY)
+- [Vídeo YouTube](https://youtu.be/nbN0SwiNxQw)
 
