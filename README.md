@@ -42,7 +42,7 @@ Desenvolver um sistema computacional capaz de:
 - Histórico das últimas 30 ocorrências
   
 #Assistente IA (AETHER-AI)
-Powered by Claude — análise inteligente dos dados de telemetria em tempo real:
+
 - Diagnóstico do status geral da missão
 - Identificação e priorização de anomalias
 - Avaliação da eficiência energética
